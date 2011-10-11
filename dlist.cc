@@ -1,6 +1,7 @@
 template <typename T>
 Dlist<T>::Node::Node(T* o) {
   this->o = o;
+  this->prev = this->next = NULL;
 }
 
 template <typename T>
@@ -11,13 +12,13 @@ Dlist<T>::Dlist(const Dlist &l) {
 
 template <typename T>
 Dlist<T>& Dlist<T>::operator= (const Dlist &l) {
-  removeAll();
-  copyAll(l);
+  this->clear();
+  this->copyAll(l);
   return *this;
 }
 
 template <typename T>
-void Dlist<T>::removeAll() {
+void Dlist<T>::clear() {
   while(!this->isEmpty())
     this->removeFront();
 }
@@ -25,8 +26,8 @@ void Dlist<T>::removeAll() {
 template <typename T>
 void Dlist<T>::copyAll(const Dlist &l) {
   Node* copyNode = l.first;
-  while(copyNode != NULL) {
-    this->insertBack(new T(*(copyNode->o)));
+  while(copyNode) {
+    this->insertBack(copyNode->o);
     copyNode = copyNode->next;
   }
 }
@@ -34,16 +35,11 @@ void Dlist<T>::copyAll(const Dlist &l) {
 template <typename T>
 void Dlist<T>::insertFront(T* o) {
   Node* newNode = new Node(o);
-  if (this->isEmpty()) {
-    first = newNode;
-    first->prev = NULL;
-    first->next = NULL;
-    last = first;
-  }
+  if (this->isEmpty())
+    first = last = newNode;
   else {
     first->prev = newNode;
     newNode->next = first;
-    newNode->prev = NULL;
     first = first->prev;
   }
 }
@@ -51,27 +47,22 @@ void Dlist<T>::insertFront(T* o) {
 template <typename T>
 void Dlist<T>::insertBack(T* o) {
   Node* newNode = new Node(o);
-  if (this->isEmpty()) {
-    last = newNode;
-    last->prev = NULL;
-    last->next = NULL;
-    first = last;
-  }
+  if (this->isEmpty())
+    first = last = newNode;
   else {
     last->next = newNode;
     newNode->prev = last;
-    newNode->next = NULL;
     last = last->next;
   }
 }
 
 template <typename T>
 T* Dlist<T>::removeFront() {
-  if (this->isEmpty())
+  if (this->isEmpty()) 
     throw emptyList();
   else {
     Node* front = first;
-    if (first->next)
+    if (first->next == NULL)
       this->makeEmpty();
     else {
       first = first->next;
@@ -89,7 +80,7 @@ T* Dlist<T>::removeBack() {
     throw emptyList();
   else {
     Node* back = last;
-    if (last->prev)
+    if (last->prev == NULL)
       this->makeEmpty();
     else {
       last = last->prev;

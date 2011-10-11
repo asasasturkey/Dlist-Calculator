@@ -9,19 +9,18 @@ public:
   Dlist() { this->makeEmpty(); }
   Dlist(const Dlist &l);
   Dlist& operator=(const Dlist& l);
-  ~Dlist() { removeAll(); }
+  ~Dlist() { this->clear(); }
 
   bool isEmpty() { return first == NULL && last == NULL; }
+  void clear();
   
   void insertFront(T* o);
   void insertBack(T* o);
-  T* peekFront();
-  T* peekBack();
+  T* peekFront() { return (first) ? first->o : NULL; }
+  T* peekBack() { return (last) ? last->o : NULL; }
   T* removeFront();
   T* removeBack();
   
-  void clear() { this->removeAll(); }
-
 private:
   struct Node {
     Node* next;
@@ -32,9 +31,8 @@ private:
 
   Node* first;
   Node* last;
-
-  void makeEmpty() { first = last = NULL; }
-  void removeAll();
+  
+  void makeEmpty() { first = NULL; last = NULL; }
   void copyAll(const Dlist &l);
 };
 
