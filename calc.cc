@@ -12,6 +12,7 @@ void badInputError(string input) { cout << "Bad input: " << input << endl; }
 void divZeroError() { cout << "Divide by zero" << endl; }
 
 Dlist<double> stack;
+string cmdHistory;
 void add() {
   double* operand1 = NULL, *operand2 = NULL;
   try{
@@ -86,9 +87,10 @@ void div() {
 void neg() {
   if (stack.isEmpty()) 
     notEnoughOperandsError("neg");
-
-  double* operand = stack.peekFront();
-  *operand = -*operand;
+  else {
+    double* operand = stack.peekFront();
+    *operand = -*operand;
+  }
 }
 
 void rev() {
@@ -108,22 +110,21 @@ void rev() {
 void dup() {
   if (stack.isEmpty())
     notEnoughOperandsError("dup");
-
-  stack.insertFront(new double(*stack.peekFront()));
+  else
+    stack.insertFront(new double(*stack.peekFront()));
 }
 
 
 void print() {
   if (stack.isEmpty())
     notEnoughOperandsError("print");
-
-  cout << *stack.peekFront() << endl;
+  else
+    cout << *stack.peekFront() << endl;
 }
 
 void printa() {
   double* operand;
   Dlist<double> temp;
-  cout << *stack.removeBack();
   while(!stack.isEmpty()) {
     operand = stack.removeBack();
     cout << " " << *operand;
@@ -134,6 +135,7 @@ void printa() {
 }
 
 void clear() { stack.clear(); }
+void history() { cout << cmdHistory << endl; }
 void help();
 
 typedef void (*cmdFunc)();
@@ -154,7 +156,8 @@ Command cmds[] = {
   {"n", neg, "negate top item"},
   {"p", print, "print top item"},
   {"r", rev, "reverse top 2 items"},
-  {"help", help, "help"}
+  {"help", help, "help"},
+  {"history", history, "history"},
 };
 
 void help() {
@@ -202,7 +205,8 @@ int main() {
     if (input.compare("q") == 0)
       break;
     if (execCommand(input) || addInteger(input)) {
-      
+      if (input.size() == 1)
+        cmdHistory += " " + input;
       continue;
     }
     else
