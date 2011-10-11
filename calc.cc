@@ -1,6 +1,7 @@
 #include <iostream>
 #include <string>
 #include <cstdlib>
+#include <stdio.h>
 #include "dlist.h"
 
 using namespace std;
@@ -17,6 +18,7 @@ void add() {
     operand1 = stack.removeFront();
     operand2 = stack.removeFront();
     stack.insertFront(new double(*operand2 + *operand1));
+    printf("%g + %g = %g\n", *operand1, *operand2, *stack.peekFront());
     delete operand1;
     delete operand2;
   }
@@ -32,6 +34,7 @@ void sub() {
     operand1 = stack.removeFront();
     operand2 = stack.removeFront();
     stack.insertFront(new double(*operand2 - *operand1));
+    printf("%g - %g = %g\n", *operand1, *operand2, *stack.peekFront());
     delete operand1;
     delete operand2;
   }
@@ -47,6 +50,7 @@ void mult() {
     operand1 = stack.removeFront();
     operand2 = stack.removeFront();
     stack.insertFront(new double(*operand2 * *operand1));
+    printf("%g * %g = %g\n", *operand1, *operand2, *stack.peekFront());
     delete operand1;
     delete operand2;
   }
@@ -68,6 +72,7 @@ void div() {
     }
     else{
       stack.insertFront(new double(*operand2 / *operand1));
+      printf("%g / %g = %g\n", *operand1, *operand2, *stack.peekFront());
       delete operand1;
       delete operand2;
     }
@@ -118,9 +123,9 @@ void print() {
 void printa() {
   double* operand;
   Dlist<double> temp;
-  cout << *stack.removeFront();
+  cout << *stack.removeBack();
   while(!stack.isEmpty()) {
-    operand = stack.removeFront();
+    operand = stack.removeBack();
     cout << " " << *operand;
     temp.insertBack(operand);
   }
@@ -137,6 +142,7 @@ struct Command {
   cmdFunc func;
   string funcName;
 };
+
 Command cmds[] = {
   {"*", mult, "multiply"},
   {"+", add, "add"},
@@ -189,13 +195,16 @@ bool addInteger(string input) {
   return false;
 }
 int main() {
+  cout << "RPM Calculator. Type \"help\" for a list of commands" << endl;
   string input;
   while(true) {
     getline(cin,input);
     if (input.compare("q") == 0)
       break;
-    if (execCommand(input) || addInteger(input))
+    if (execCommand(input) || addInteger(input)) {
+      
       continue;
+    }
     else
       badInputError(input);
   }
